@@ -1,0 +1,17 @@
+# R
+.Rhistory
+.RData
+.Rproj.user
+*.Rproj
+
+# Quarto
+.quarto/
+*_cache/
+*_files/
+
+# macOS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log

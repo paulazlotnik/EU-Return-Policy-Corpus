@@ -1,0 +1,91 @@
+code,label,return_focus
+185,migration control,True
+259,migratory movement,False
+488,identity document,False
+552,rights of aliens,False
+553,rights of minorities,False
+564,international human rights law,False
+724,emigration,False
+760,child of migrant,False
+934,brain drain,False
+950,removal,True
+953,extradition,False
+977,female migrant,False
+1114,frontier,False
+1213,border war,False
+1302,immigration,False
+1462,integration of migrants,False
+1909,migration,False
+1910,commuting,False
+1911,return migration,True
+1912,family migration,False
+1913,forced migration,False
+1914,frontier migration,False
+1915,illegal migration,True
+1916,internal migration,False
+1917,interurban migration,False
+1920,intraurban commuting,False
+1921,Community migration,False
+1922,occupational migration,False
+1923,rural migration,False
+1925,seasonal migration,False
+1948,geographical mobility,False
+2036,naturalisation,False
+2065,nomadism,False
+2096,stateless person,False
+2509,migration policy,False
+2834,protection of minorities,False
+2867,political asylum,False
+2986,refugee,False
+2991,political refugee,False
+3053,forced disappearance,False
+3055,police checks,False
+3075,aid to refugees,False
+3320,migrant,False
+3322,migration for settlement purposes,False
+3323,repatriation grant,False
+3710,UNHCR,False
+3906,freedom of movement,False
+3912,xenophobia,False
+4003,foreign national,False
+4004,residence permit,False
+4005,admission of aliens,False
+4045,public safety,False
+4495,transfer of population,False
+4562,migrant worker,False
+4614,UNRWA,False
+4696,civilian victim,False
+5121,colonialism,False
+5405,Schengen Agreement,False
+5528,ethnic conflict,False
+5540,border control,False
+5551,police cooperation,False
+5552,EU police cooperation,False
+5592,discrimination on the basis of nationality,False
+5597,right of asylum,False
+5649,external border of the EU,False
+5796,EU visa policy,False
+5933,trafficking in human beings,False
+5991,International Organisation for Migration,False
+6222,"area of freedom, security and justice",False
+6540,diaspora,False
+6541,EU migration policy,False
+6626,Schengen Information System,False
+8439,Frontex,False
+8481,EU police mission,False
+39362,non-EU national,False
+52595,citizenship,False
+58876,recognised non-citizen,False
+447958,European Union Agency for Asylum,False
+c_0894af6b,internally displaced person,False
+c_2c8a75b1,family reunification,False
+c_63446d6e,unaccompanied child,False
+c_90dfa6c7,cash and voucher assistance,False
+c_977a9fe5,circular migration,False
+c_a2a3268e,refugee facility,False
+c_b0536152,economic migration,False
+c_b0c14f45,resettlement of persons,False
+c_c825b20c,migration statistics,False
+c_d867a3b5,urban migration,False
+c_f7430876,search and rescue,False
+c_ff638149,asylum seeker,False

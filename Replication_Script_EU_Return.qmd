@@ -1,0 +1,450 @@
+---
+title: "Replication File for 'Changing Norms in EU Return Policy? A longitudinal analysis of Commission documents on return'"
+date: last-modified
+toc: true
+format: 
+    html:
+        code-fold: true
+        code-background: false
+editor: visual
+execute:
+    cache: true
+    dir: .
+---
+
+Replication Script for 'Changing Norms in EU Return Policy? A longitudinal analysis of Commission documents on return' (Paula Hoffmeyer-Zlotnik & Philipp Stutz). This script reproduces the structural topic model and graphs used in the paper.
+
+## Setup
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='all'}
+#|label: setup
+
+library(tidyverse)
+library(stringr)
+library(quanteda)
+library(quanteda.textplots)
+library(quanteda.textstats)
+library(stm)
+library(scales)
+
+
+
+```
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='all'}
+#|label: load_final_df
+
+### load the data
+
+
+df <- read.csv('Return_Corpus_EurLex_PR_clean.csv')
+```
+
+## Pre-processing
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='all'}
+#| label: pre-processing
+
+### Pre-processing: Number and token-level cleaning
+
+# NOTE: Some EurLex documents contained HTML boilerplate as an artefact from the scraping process. This was removed before publication. The pattern removal was intentionally LIGHT to:
+#   (1) Allow researchers to make their own cleaning choices based on their research questions
+#   (2) Avoid deleting documents that may contain no or minimal content but are still 
+#       identifiable and retrievable via their CELEX numbers for verification purposes
+# Only obvious scraper artifacts and encoding issues are removed; substantive content is preserved.
+
+
+corpus_all <- corpus(df,
+                 docid_field = "id",
+                 text_field = "text",
+                 unique_docnames = F) # adjust name of the dataframe if needed
+
+
+### Common pre-processing steps
+
+# Define function to remove numbers before tokenization
+clean_numbers_pre_tokenization <- function(text) {
+  # Remove numbers combined with hyphens/underscores (e.g., 2007-2013)
+  text <- str_replace_all(text, "\\b[0-9]+[-_][0-9]+\\b", " ")
+  
+  # Remove mixed alphanumeric tokens (press releases)
+  # e.g., "023slovakia1", "0extens"
+  text <- str_replace_all(text, "\\b[0-9]+[a-zA-Z]+[0-9]*\\b", " ")
+  
+  # Remove standalone numbers
+  text <- str_replace_all(text, "\\b\\d+\\b", " ")
+  
+  # Collapse repeated whitespace
+  text <- str_squish(text)
+  
+  text
+}
+
+# Apply number cleaning to the text
+df$text <- clean_numbers_pre_tokenization(df$text)
+
+# Recreate corpus after number cleaning
+corpus_all <- corpus(df,
+                 docid_field = "id",
+                 text_field = "text",
+                 unique_docnames = F)
+
+# tokenize the corpus
+# remove punctuation, symbols and numbers
+
+# Tokenizing the corpus:
+tks_1 <- quanteda::tokens(corpus_all,
+              remove_punct=TRUE,
+              remove_symbols=TRUE,
+              remove_numbers=TRUE, # still keeps digits w symbols (e.g. 2007-2013)
+              remove_separators = TRUE,
+              remove_url=TRUE,
+              verbose = FALSE)
+
+
+# Calculate the total number of tokens
+total_tokens <- sum(ntoken(tks_1))
+print(total_tokens)
+
+
+# Remove stopwords (more than EN for COM docs)
+tks_2 <- tokens_remove(tks_1, pattern = c(stopwords('en'), stopwords('fr'), stopwords('de'), "en", "fr", "de")) 
+
+# convert to lower case
+tks_3 <- tokens_tolower(tks_2)
+
+tks_4 <- tokens_compound(tks_3, pattern = phrase(c("official journal", "staff working document", "council decision",  "council regulation", 
+ "coast guard", "justice and home affairs", "trust fund",
+ "mutatis mutandis", "inter alia", "ad hoc", 
+ "member states", "member state", 
+ "joint committee",
+ "root causes",
+ "third-country nationals", "third country nationals", "migrant worker", "migrant workers",
+"european union","european community", "european parliament",
+"unaccompanied minors",  "unaccompanied minor",
+"illegal migration", "irregular migration", "return directive",
+ "common european asylum system", "international protection", "subsidiary protection",
+"fundamental rights","human rights", "basic rights", "migrants' rights", "migrant rights", 
+ "SIS II", "SIS I", "residence permit","travel document",
+"united kingdom", "hong kong",
+   "data protection", "free movement" )))
+
+# Calculate the total number of tokens
+total_tokens <- sum(ntoken(tks_4))
+print(total_tokens)
+
+
+# Stem the words 
+tks_stem <- tokens_wordstem(tks_4, language = quanteda_options("language_stemmer")) 
+
+# turn into dfm
+dfm_all <- dfm(tks_stem) # stemmed version
+
+# trim very frequent and very infrequent tokens
+dfm_all_trim <- dfm_trim(dfm_all, min_termfreq = 20, min_docfreq = 2, verbose=FALSE)
+
+# Removing features occurring: 
+#   - fewer than 20 times: 161
+#   - in fewer than 2 documents: 119
+#   Total features removed: 161 (98.8%).
+
+dfm_stm <- quanteda::convert(dfm_all_trim, to = "stm")
+```
+
+## Asessing the number of topics (Note: this runs for a while)
+
+```{r, eval=F,echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='all'}
+#| label: findK
+#| echo: false
+
+
+## find number of topics for stemmed dfm
+# commented out since this takes a while
+K <- c(4,6, 8,10,12, 14, 16, 18, 20)
+fit <- searchK(dfm_stm$documents, dfm_stm$vocab, K = K, verbose = TRUE)
+
+# Create table and plot
+plot_df <- tibble(
+  K = K,
+  Coherence  = unlist(fit$results$semcoh),
+  Exclusivity = unlist(fit$results$exclus)
+) %>%
+  pivot_longer(cols = -K, names_to = "metric", values_to = "value")
+
+
+```
+
+```{r, eval=F,echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='all'}
+#| label: Plot_K
+
+# one plot for both
+
+ggplot(plot_df, aes(x = K, y = value, color = metric)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Number of topics (K)", y = "Score", color = "Metric") +
+  theme_minimal()
+
+#Plot result - two graphs
+Plot_K <- ggplot(plot_df, aes(K, value, color = metric)) +
+  geom_line(linewidth = 1.5, show.legend = FALSE) +
+  facet_wrap(~metric, scales = "free_y") +
+  labs(x = "Number of topics K",
+       title = "Statistical fit of models with different K")
+
+print(Plot_K)
+```
+
+## STM with 10 topics
+
+### Run the STM on year / corpus /type and assess the topics
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='all'}
+#| label: stm_all_10
+
+stm_10_all_yc <- stm(documents = dfm_stm$documents,
+                     vocab = dfm_stm$vocab,
+                     K = 10,
+                     prevalence = ~year + corpus,
+                     data = dfm_stm$meta,
+                     seed = 123)
+
+summary(stm_10_all_yc)  # same highest prob words for all topics; Lift words seem different for Topic 9 - not sure why?
+
+```
+
+### Plot the topic proportions
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='all'}
+#| label: tm_all_yc_topic_proc
+
+
+### beta and gamma matrices for the topics
+
+td_beta <- tidy(stm_10_all_yc) # beta value for each word in each topic - probabilities that each word is generated from each topic.
+
+td_gamma <- tidy(stm_10_all_yc, matrix = "gamma",
+                 document_names = rownames(dfm_stm)) # gamma value for 
+# each topic and each document - probabilities that each document is generated from each topic (https://juliasilge.com/blog/evaluating-stm/)
+
+
+# dataframe with top 5 terms per topic
+top_terms <- td_beta %>%
+  arrange(beta) %>%
+  group_by(topic) %>%
+  top_n(5, beta) %>%
+  arrange(-beta) %>%
+  select(topic, term) %>%
+  summarise(terms = list(term)) %>%
+  mutate(terms = map(terms, paste, collapse = ", ")) %>% 
+  unnest(cols = c(terms))
+
+gamma_terms <- td_gamma %>%
+  group_by(topic) %>%
+  summarise(gamma = mean(gamma)) %>%
+  arrange(desc(gamma)) %>%
+  left_join(top_terms, by = "topic") %>%
+  mutate(topic = paste0("Topic ", topic),
+         topic = reorder(topic, gamma))
+
+###naming the topics
+
+## changed version to have Topic 1 on top: 
+gamma_terms$topic_name <- gamma_terms$topic %>% 
+  recode("Topic 1" = "3. Internal Funds" ,
+"Topic 2" = "7. Readmission agreements ",
+"Topic 3" = "6. Frontex & Borders",
+"Topic 4" = "5. Return Legislation",
+"Topic 5" = "1. Third Country Cooperation & Development",
+"Topic 6" = "2. Visa Liberalisation Agreements",
+"Topic 7" = "10. Visa Monitoring & Cyprus",
+"Topic 8" = "4. Relocation & Resettlement",
+"Topic 9" = "9. Databases",
+"Topic 10" = "8. Eurodac & Legislation"
+  )
+
+
+gamma_terms$terms <- gsub("_","\\_",gamma_terms$terms)
+
+main_model_all_words <- stm::labelTopics(stm_10_all_yc,n = 5)
+main_model_frex_words <- main_model_all_words[["frex"]]
+
+main_model_frex <- data.frame(topic = paste("Topic",1:10),
+                              frex_terms=NA)
+
+for(i in 1:nrow(main_model_frex)){
+  main_model_frex$frex_terms[i] <- paste(main_model_frex_words[i,1:5],collapse=", ")
+}
+
+gamma_terms <- gamma_terms %>% left_join(main_model_frex)
+
+# Plot
+gamma_terms %>%
+  ggplot(aes(reorder(topic_name,gamma), gamma, label = frex_terms)) +
+  geom_col(show.legend = FALSE,width = 0.9, fill = "darkgrey") +
+  geom_text(hjust = 0, nudge_y = 0.0005,size=3.1) +
+  coord_flip() +
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0, 0.5)) +
+  theme_bw()+
+  labs(x = NULL, y = "Expected Topic Proportion", title = "Topics proportions (documents and press releases)" )+
+  theme(axis.text=element_text(colour="black"),
+        axis.title = element_text(size=10,colour="black"),
+        axis.ticks.y = element_blank()) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 25))
+
+
+```
+
+### Plot the topics over time
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='last'}
+#| label: Plot_stm_all_10_time
+
+# prepare the topic labels for the plot
+
+model.stm.labels <- labelTopics(stm_10_all_yc, 1:10)
+
+# model labels - adjust for new display order
+
+model.stm.labels$title <- c("Topic 1" = "3. Internal Funds" ,
+"Topic 2" = "7. Readmission agreements ",
+"Topic 3" = "6. Frontex & Borders",
+"Topic 4" = "5. Return Legislation",
+"Topic 5" = "1. Third Country Cooperation & Development",
+"Topic 6" = "2. Visa Liberalisation Agreements",
+"Topic 7" = "10. Visa Monitoring & Cyprus",
+"Topic 8" = "4. Relocation & Resettlement",
+"Topic 9" = "9. Databases",
+"Topic 10" = "8. Eurodac & Legislation"
+  )
+
+
+# estimate model with years as IV (smooth line / prediction)
+model.stm.ee <- estimateEffect(formula = 1:10 ~ s(year), stmobj = stm_10_all_yc, meta = dfm_stm$meta, uncertainty = "Global")
+
+# Custom order for topics - display by NEW topic order (1-10 by prevalence/naming)
+# Maps new topic numbers to original STM topic indices
+custom_order <- c(5, 6, 1, 8, 4, 3, 2, 10, 9, 7)
+
+# Extract the corresponding labels in the correct order
+ordered_labels <- model.stm.labels$title[custom_order]
+
+# plot the results -
+# par(mfrow=c(3,4))
+
+par(family = "sans", font.main = 1, cex.main = 0.8, mfrow=c(2,5))
+
+for (i in 1:10) {
+  # Select the correct topic index
+  topic_index <- custom_order[i]
+  
+  # Wrap the label text to fit within a certain width (e.g., 20 characters)
+  # Collapse into a single string with line breaks
+  wrapped_label <- paste(strwrap(ordered_labels[i], width = 20), collapse = "\n")
+  
+  # Plot with the wrapped label
+  plot(model.stm.ee, "year", method = "continuous", topics = topic_index, ci.level = 0.95, 
+       ylim = c(0,0.5), main = wrapped_label, printlegend = F, cex.main = 0.9,
+       linecol = "black",  # Main line in black
+       ci.col = "gray70")
+}
+
+par(mfrow=c(1,1))
+```
+
+### Estimate how the corpus affects the topic prevalence
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='show',fig.keep='all'}
+#| label: estimate stm_10
+
+# prepare the topic labels for the plot
+
+model.stm.labels <- labelTopics(stm_10_all_yc, 1:10)
+
+
+model.stm.labels$title <- c("Topic 1" = "3. Internal Funds" ,
+"Topic 2" = "7. Readmission agreements ",
+"Topic 3" = "6. Frontex & Borders",
+"Topic 4" = "5. Return Legislation",
+"Topic 5" = "1. Third Country Cooperation & Development",
+"Topic 6" = "2. Visa Liberalisation Agreements",
+"Topic 7" = "10. Visa Monitoring & Cyprus",
+"Topic 8" = "4. Relocation & Resettlement",
+"Topic 9" = "9. Databases",
+"Topic 10" = "8. Eurodac & Legislation"
+  )
+
+
+```
+
+##### Direct comparison between the two (mean topic prevalence)
+
+We first prepare the df with the estimated topic prevalence by corpus
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide',fig.keep='all'}
+#| label: topic prevalence by corpus
+
+
+
+# Extract mean prevalence and CI for each topic and corpus
+prevalence_data <- dfm_stm$meta %>%
+  mutate(prevalence = stm_10_all_yc$theta %>% as.data.frame())    # STM topic prevalence
+
+# Unnest the 'Prevalence' column (stored as df within df)
+prevalence_data <- prevalence_data %>%
+  unnest(prevalence)
+
+# pivot longer
+prevalence_data <- prevalence_data %>%
+  pivot_longer(cols = starts_with("V"), names_to = "Topic", values_to = "Prevalence") %>% 
+  group_by(Corpus = corpus, Topic) %>%
+  summarize(
+    Mean_Prevalence = mean(Prevalence),
+    StdErr = sd(Prevalence) / sqrt(n()),
+    CI_Low = Mean_Prevalence - 1.96 * StdErr,
+    CI_High = Mean_Prevalence + 1.96 * StdErr,
+    .groups = "drop"
+  )
+
+# Update Topic labels to match current topic naming (by prevalence/renaming)
+# The levels should map STM topics (V1-V10) to new topic numbers (1-10)
+# Based on the recode mapping: Topic 1=STM3, Topic 2=STM7, Topic 3=STM6, Topic 4=STM5, Topic 5=STM1, 
+# Topic 6=STM2, Topic 7=STM10, Topic 8=STM4, Topic 9=STM9, Topic 10=STM8
+
+prevalence_data <- prevalence_data %>%
+  mutate(Topic = factor(Topic, 
+                        levels = paste0("V", c(5, 6, 1, 8, 4, 3, 2, 10, 9, 7)),  # STM topic order
+                        labels = c("1. Third Country Cooperation & Development",
+                                    "2. Visa Liberalisation Agreements",
+                                   "3. Internal Funds" ,
+                                    "4. Relocation & Resettlement",
+                                    "5. Return Legislation",
+                                    "6. Frontex & Borders",
+                                    "7. Readmission agreements ",
+                                    "8. Eurodac & Legislation",
+                                    "9. Databases",
+                                    "10. Visa Monitoring & Cyprus"
+)) ) |> 
+  mutate(Corpus = factor(Corpus, levels = c("EurLex", "Press"), labels = c("EurLex", "Press Releases")))
+
+
+
+# Plot mean prevalence
+
+ggplot(prevalence_data, aes(x = Corpus, y = Mean_Prevalence, color = Corpus)) +
+  geom_point(size = 2) +  # Add size to the points
+  geom_errorbar(aes(ymin = CI_Low, ymax = CI_High), width = 0.2, position = position_dodge(0.9)) +
+  facet_wrap(~ Topic, ncol = 5, labeller = label_wrap_gen(width = 20)) +  # Wrap facet labels
+  labs(x = "Corpus", y = "Mean Topic Prevalence",
+       title = "Mean Topic Prevalence by Corpus with Confidence Intervals") +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        strip.text = element_text(size = 9), # Adjust size of facet labels
+        axis.text.x = element_blank()) +  # delete x axis text
+  scale_color_manual(values = c("EurLex" = "black", "Press Releases" = "gray60"))  # Use different gray shades for error bars
+
+
+
+
+```
