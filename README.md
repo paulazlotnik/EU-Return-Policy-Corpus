@@ -77,7 +77,7 @@ Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. "Changing Norms in EU Return Policy
 
 ## Citation
 
-Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. 2026. *EU Return Policy Corpus (1999-2020)*. Zenodo. [DOI placeholder]
+Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. 2026. Replication Material for: Changing Norms in EU Return Policy? A longitudinal analysis of Commission documents on return. Journal of Ethnic and Migration Studies. Zenodo. https://doi.org/10.5281/zenodo.18630085
 
 Additionally, when using press releases, please cite:
 

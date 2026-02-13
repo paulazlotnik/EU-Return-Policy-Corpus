@@ -13,7 +13,7 @@
 | `text` | character | Document text | Document text (cleaning steps see below). |
 
 
-## Data Cleaning
+## Text Cleaning
 
 The following artifacts were systematically removed from document texts after scraping:
 - HTML elements: `@import`, `url()`, `css`, `xml`, `EUR-Lex` branding
@@ -168,7 +168,7 @@ For the full list of eurovoc terms see https://op.europa.eu/en/web/eu-vocabulari
 
 ## Citation
 
-Hoffmeyer-Zlotnik, Paula and Philipp Stutz. (2025). EU Migration and Return Policy Corpus (1985-2020). Zenodo. [DOI placeholder].
+Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. 2026. *EU Return Policy Corpus (1999-2020)*. Zenodo. https://doi.org/10.5281/zenodo.18630085
 
 For press releases, additionally cite:  
 Rauh, Christian. Clear Messages to the European Public? The Language of European Commission Press Releases 1985–2020. Journal of European Integration, 15 octobre 2022, 1‑19. https://doi.org/10.1080/07036337.2022.2134860.
