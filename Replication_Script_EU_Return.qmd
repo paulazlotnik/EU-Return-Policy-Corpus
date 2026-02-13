@@ -22,10 +22,10 @@ Replication Script for 'Changing Norms in EU Return Policy? A longitudinal analy
 library(tidyverse)
 library(stringr)
 library(quanteda)
-library(quanteda.textplots)
-library(quanteda.textstats)
 library(stm)
 library(scales)
+library(broom)
+library(tidytext)
 
 
 

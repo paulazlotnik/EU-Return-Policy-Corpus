@@ -68,7 +68,7 @@ Document texts have been cleaned to remove:
 - Encoding errors and placeholder text
 - Language code artifacts
 
-Standard NLP preprocessing (stopwords, stemming, lowercasing) has NOT been applied, allowing users to apply their own pipelines.
+Standard NLP preprocessing (stopwords, stemming, lowercasing) has NOT been applied before publication of the corpus, allowing users to apply their own pipelines for future applications. The replication script contains the pre-processing steps done for the analysis.
 
 ## Corpus Construction
 
@@ -77,30 +77,11 @@ Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. "Changing Norms in EU Return Policy
 
 ## Citation
 
-```bibtex
-@dataset{hoffmeyer2025eumc,
-  author = {Hoffmeyer-Zlotnik, Paula and Stutz, Philipp},
-  year = {2025},
-  title = {{EU Migration and Return Policy Corpus (1985-2020)}},
-  publisher = {Zenodo},
-  note = {DOI placeholder}
-}
-```
+Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. 2026. *EU Return Policy Corpus (1999-2020)*. Zenodo. [DOI placeholder]
 
 Additionally, when using press releases, please cite:
 
-```bibtex
-@article{rauh2022clear,
-  author = {Rauh, Christian},
-  year = {2022},
-  title = {{Clear Messages to the European Public? The Language of European Commission Press Releases 1985–2020}},
-  journal = {Journal of European Integration},
-  volume = {45},
-  number = {4},
-  pages = {683--701},
-  doi = {10.1080/07036337.2022.2134860}
-}
-```
+Rauh, Christian. 2022. "Clear Messages to the European Public? The Language of European Commission Press Releases 1985–2020." *Journal of European Integration* 45(4): 683–701. https://doi.org/10.1080/07036337.2022.2134860
 
 ## References
 

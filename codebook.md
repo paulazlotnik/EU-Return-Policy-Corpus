@@ -7,7 +7,7 @@
 | `id` | character | Document identifier | CELEX number for Eur-Lex docs, ipnum for press releases. Unique identifier. |
 | `corpus` | character | Source corpus | "EurLex" = Eur-Lex policy documents, "Press" = Commission press releases |
 | `type` | character | Document type | Coded types extracted from document titles and source corpus: Commission Staff Working Document, Communication, Legislative Decision, Legislative Proposal, Report, Press Release, Other | 
-| `date` | character | Publication date | Range: 01.02.1999 - 08.01.2020  |
+| `date` | character | Publication date | ISO 8601 format (YYYY-MM-DD). Range: 1999-02-01 to 2020-12-10  |
 | `year` | integer | Publication year | Range: 1999-2020 |
 | `title` | character | Document title | **Not unique**: 9 duplicate titles exist (14 documents total) representing different versions, revisions, or parts of related policy initiatives |
 | `text` | character | Document text | Document text (cleaning steps see below). |
@@ -23,7 +23,7 @@ The following artifacts were systematically removed from document texts after sc
 - Language code artifacts: Standalone `en`, `fr`, `de`, etc. when not part of words
 - Letter-number combinations: CELEX numbers and date ranges in tokenized form
 
-**Note**: This cleaning focuses on removing scraping/encoding artifacts. Standard NLP preprocessing (stopword removal, stemming, lowercasing) is NOT applied, allowing users to apply their own preprocessing pipelines.
+**Note**: This cleaning focuses on removing scraping/encoding artifacts. Standard NLP preprocessing (stopword removal, stemming, lowercasing) is NOT applied, allowing users to apply their own preprocessing pipelines. The replication script contains the pre-processing steps done for the analysis.
 
 ## Source Attribution
 
@@ -55,17 +55,15 @@ language of European Commission press releases 1985-2020', Journal of European I
   - Legislative Decision: 17
   - Other: 13
 
-## Citation
-
-Hoffmeyer-Zlotnik, Paula and Philipp Stutz. (2025). EU Migration and Return Policy Corpus (1985-2020). Zenodo. [DOI placeholder].
-
-For press releases, additionally cite:  
-Rauh, Christian. Clear Messages to the European Public? The Language of European Commission Press Releases 1985–2020. Journal of European Integration, 15 octobre 2022, 1‑19. https://doi.org/10.1080/07036337.2022.2134860.
 
 
 ## Eurovoc Filtering Concepts
 
-This corpus was filtered using 90 migration-related Eurovoc concepts. A subset of these (marked below) is specifically flagged for return focus.
+This corpus was filtered using 90 migration-related Eurovoc concepts that were manually identified by the authors. A subset of these (marked below) is specifically flagged for return focus. 
+
+A machine-readable version of this table is also available in `eurovoc_migration_concepts.csv`.
+
+Note that some of the terms associated with eurovoc numerical codes have changed over time, while the numerical codes (IDs) have remained the same. Listed here are only the terms used as of July 2024.
 
 For the full list of eurovoc terms see https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/eurovoc 
 
@@ -165,4 +163,12 @@ For the full list of eurovoc terms see https://op.europa.eu/en/web/eu-vocabulari
 **Total concepts**: 90  
 **Return focus concepts**: 4 (codes: 185, 950, 1911, 1915)
 
-A machine-readable version of this table is also available in `eurovoc_migration_concepts.csv`.
+
+
+
+## Citation
+
+Hoffmeyer-Zlotnik, Paula and Philipp Stutz. (2025). EU Migration and Return Policy Corpus (1985-2020). Zenodo. [DOI placeholder].
+
+For press releases, additionally cite:  
+Rauh, Christian. Clear Messages to the European Public? The Language of European Commission Press Releases 1985–2020. Journal of European Integration, 15 octobre 2022, 1‑19. https://doi.org/10.1080/07036337.2022.2134860.
