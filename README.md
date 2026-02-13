@@ -49,17 +49,15 @@ Required R packages:
 
 ## Document Types
 
-The corpus contains 701 documents classified into 7 types:
+The corpus contains 701 documents classified into the following types:
 
 - Press Release (449)
-- Legislative Proposal (TBD)
-- Communication (TBD)
-- Commission Staff Working Document (TBD)
-- Legislative Decision (TBD)
-- Report (TBD)
-- Other (TBD)
-
-(Note: Exact counts for EurLex documents = 252 total)
+- Legislative Proposal (69)
+- Report (57)
+- Communication (51)
+- Commission Staff Working Document (45)
+- Legislative Decision (17)
+- Other (13)
 
 
 ## Text Cleaning
