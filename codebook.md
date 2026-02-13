@@ -7,7 +7,7 @@
 | `id` | character | Document identifier | CELEX number for Eur-Lex docs, ipnum for press releases. Unique identifier. |
 | `corpus` | character | Source corpus | "EurLex" = Eur-Lex policy documents, "Press" = Commission press releases |
 | `type` | character | Document type | Coded types extracted from document titles and source corpus: Commission Staff Working Document, Communication, Legislative Decision, Legislative Proposal, Report, Press Release, Other | 
-| `date` | character | Publication date | Range: 1999 - 2020  |
+| `date` | character | Publication date | Range: 01.02.1999 - 08.01.2020  |
 | `year` | integer | Publication year | Range: 1999-2020 |
 | `title` | character | Document title | **Not unique**: 9 duplicate titles exist (14 documents total) representing different versions, revisions, or parts of related policy initiatives |
 | `text` | character | Document text | Document text (cleaning steps see below). |
@@ -19,7 +19,7 @@ The following artifacts were systematically removed from document texts after sc
 - HTML elements: `@import`, `url()`, `css`, `xml`, `EUR-Lex` branding
 - CELEX identifiers embedded in text: `L_\d+EN` patterns
 - Encoding errors: `ð`, `ï`, `Ö`, `Õ`, `ê`, `ò`
-- Placeholder text: `aaaa`, `pppp`, `xxx`, `xx`, `oj`, `gt`
+- Placeholder text or very common abbreviations: `aaaa`, `pppp`, `xxx`, `xx`, `oj`, `gt`
 - Language code artifacts: Standalone `en`, `fr`, `de`, etc. when not part of words
 - Letter-number combinations: CELEX numbers and date ranges in tokenized form
 
