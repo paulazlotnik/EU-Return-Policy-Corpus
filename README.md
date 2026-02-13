@@ -1,4 +1,4 @@
-# EU Migration and Return Policy Corpus (1999-2020)
+# EU Return Policy Corpus (1999-2020)
 
 This archive contains a comprehensive corpus of European Union policy documents related to return policy, spanning from 1999 to 2020.
 The corpus is the basis of the analysis reported in Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. "Changing Norms in EU Return Policy? A longitudinal analysis of Commission documents on return". Forthcoming in Journal of Ethnic and Migration Studies
