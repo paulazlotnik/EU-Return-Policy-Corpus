@@ -170,5 +170,9 @@ For the full list of eurovoc terms see https://op.europa.eu/en/web/eu-vocabulari
 
 Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. 2026. *EU Return Policy Corpus (1999-2020)*. Zenodo. https://doi.org/10.5281/zenodo.18630085
 
+and
+
+Hoffmeyer-Zlotnik, Paula, and Philipp Stutz. 2026. Changing Norms in EU Return Policy? A longitudinal analysis of Commission documents on return. Journal of Ethnic and Migration Studies. https://doi.org/10.1080/1369183X.2026.2633666
+
 For press releases, additionally cite:  
 Rauh, Christian. Clear Messages to the European Public? The Language of European Commission Press Releases 1985–2020. Journal of European Integration, 15 octobre 2022, 1‑19. https://doi.org/10.1080/07036337.2022.2134860.
